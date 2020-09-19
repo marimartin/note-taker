@@ -1,6 +1,9 @@
 var fs = require("fs");
 const path = require("path");
 
+const { v4: uuidv4 } = require('uuid');
+
+
 
 // ROUTING
 module.exports = function (app) {
@@ -23,16 +26,10 @@ module.exports = function (app) {
 
 
     // API POST Requests
-    // Below code handles when a user submits a form and thus submits data to the server.
-    // In each of the below cases, when a user submits form data (a JSON object)
-    // ...the JSON is pushed to the appropriate JavaScript array
-    // (ex. User fills out a reservation request... this data is then sent to the server...
-    // Then the server saves the data to the tableData array)
-    // ---------------------------------------------------------------------------
 
     app.post("/api/notes", function (req, res) {
         // 
-        console.log(req.body);
+        // console.log(req.body);
 
 
         fs.readFile(path.join(__dirname, "../db/db.json"), "utf8", function (error, data) {
@@ -41,9 +38,13 @@ module.exports = function (app) {
                 return console.log(error);
             }
 
+
             const parsedData = JSON.parse(data);
-            // 
+
+            req.body.id = uuidv4();
+
             parsedData.push(req.body);
+
 
             fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(parsedData), function (err) {
 
@@ -51,11 +52,11 @@ module.exports = function (app) {
                     return console.log(err);
                 }
 
-                console.log("Success!");
+                // console.log("Success!");
 
                 // res.json(parsedData);
 
-                console.log(__dirname);
+                // console.log(__dirname);
                 res.sendFile(path.join(__dirname, "../public/notes.html"));
             });
 
@@ -65,13 +66,36 @@ module.exports = function (app) {
 
     });
 
+    app.delete("/api/notes/:id", function (req, res) {
+        console.log(req.params.id);
+        fs.readFile(path.join(__dirname, "../db/db.json"), "utf8", function (error, data) {
+            if (error) {
+                return console.log(error);
+            }
 
+            const parsedData = JSON.parse(data);
+            const filteredNotes = parsedData.filter(function (item) {
+                // if (item.id === req.params.id) {
+                //     return false;
+                // }
+                // return true;
+                return item.id !== req.params.id;
+            })
+            console.log(filteredNotes);
 
-    // app.post("/api/clear", function (req, res) {
-    //     // Empty out the arrays of data
-    //     tableData.length = 0;
-    //     waitListData.length = 0;
+            fs.writeFile(path.join(__dirname, "../db/db.json"), JSON.stringify(filteredNotes), function (err) {
 
-    //     res.json({ ok: true });
-    // });
+                if (err) {
+                    return console.log(err);
+                }
+
+                // console.log("Success!");
+
+                // res.json(parsedData);
+
+                // console.log(__dirname);
+                res.sendFile(path.join(__dirname, "../public/notes.html"));
+            });
+        })
+    });
 };
