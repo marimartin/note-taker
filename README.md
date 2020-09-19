@@ -10,4 +10,4 @@
 
   ## Screenshots
 
-  <img src="/images/note-taker.gif">
+  <img src="/images/note-taker-demo.gif">
