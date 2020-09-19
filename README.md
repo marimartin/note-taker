@@ -8,6 +8,6 @@
  ## Link to Deployed Application
  [Note-Taker](https://note-taker-mm.herokuapp.com/)
 
-  ## Screenshots
+  ## Demo
 
   <img src="/images/note-taker-demo.gif">
